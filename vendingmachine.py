@@ -9,65 +9,45 @@ print("""
 """)
 class VendingMachine:
     def __init__(self):
-        self.products = {
-            'cola': {'price': 1.50, 'quantity': 10},
-            'chips': {'price': 1.00, 'quantity': 15},
-            'candy': {'price': 0.75, 'quantity': 20},
-            'mango juice' : {'price' : 2.00, 'quantity' : 1}
+        self.items = {
+            1: {"name": "dew6", "price": 1.50},
+            2: {"name": "ice cream", "price": 1.00},
+            3: {"name": "Chocolate", "price": 0.75},
+            4: {"name": "chips", "price": 0.50},
+            5: {"name": "coco cola", "price": 50},
+            6: {"name": "sandwich", "price": 3.00},
+            7: {"name": "water", "price": 1.00},
+            # Add more items as needed
         }
-        self.balance = 0.0
 
-    def display_products(self):
-        print("Available Products:")
-        for product, details in self.products.items():
-            print(f"{product.capitalize()}: ${details['price']} - Quantity: {details['quantity']}")
+    def display_items(self):
+        print("Available Items:")
+        for item_num, item_info in self.items.items():
+            print(f"{item_num}. {item_info['name']} - ${item_info['price']}")
 
-    def insert_money(self, amount):
-        self.balance += amount
-        print(f"Balance: ${self.balance:.2f}")
+    def purchase_item(self, item_number, amount_inserted):
+        if item_number in self.items:
+            selected_item = self.items[item_number]
+            item_price = selected_item["price"]
 
-    def select_product(self, product):
-        if product in self.products:
-            if self.products[product]['quantity'] > 0 and self.balance >= self.products[product]['price']:
-                self.products[product]['quantity'] -= 1
-                self.balance -= self.products[product]['price']
-                print(f"Dispensing {product.capitalize()}... Enjoy!")
+            if amount_inserted >= item_price:
+                change = amount_inserted - item_price
+                print(f"Enjoy your {selected_item['name']}! Your change is ${change:.2f}")
             else:
-                print("Insufficient funds or out of stock.")
+                print("Insufficient cash. Please insert more money.")
         else:
-            print("Invalid product selection.")
+            print("Invalid item number. Please select a valid item number.")
 
-    def return_change(self):
-        if self.balance > 0:
-            print(f"Returning change: ${self.balance:.2f}")
-            self.balance = 0.0
-        else:
-            print("No change to return.")
-
-# Example usage:
+# Example Usage:
 if __name__ == "__main__":
     vending_machine = VendingMachine()
 
-    while True:
-        print("\nWelcome to the Extra Good Vending Machine!")
-        vending_machine.display_products()
+    vending_machine.display_items()
 
-        choice = input("\nEnter product name (or 'exit' to quit): ").lower()
-
-        if choice == 'exit':
-            break
-
-        if choice == 'admin':  # Secret admin code to restock products
-            for product in vending_machine.products:
-                vending_machine.products[product]['quantity'] = 10
-            print("Admin restocked products.")
-
-        elif choice in vending_machine.products:
-            amount = float(input("Insert money (in dollars): "))
-            vending_machine.insert_money(amount)
-            vending_machine.select_product(choice)
-
-        else:
-            print("Invalid choice. Please try again.")
-    
-    vending_machine.return_change()
+    try:
+        item_number = int(input("Enter the number of the item you want to purchase: "))
+        amount_inserted = float(input("Insert money: $"))
+        
+        vending_machine.purchase_item(item_number, amount_inserted)
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
